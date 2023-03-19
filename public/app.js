@@ -41,12 +41,89 @@ const pintarRegistros = async () => {
 
     // consultar por nombre de mascota
 const consultaMascota = async () => {
-    console.log("consulta nombre mascota y rut dueño")
+    try {
+        const consulta = prompt("Ingrese nombre de la mascota: ")
+        const res = await axios(`http://localhost:8000/mascotas/${consulta}`)
+           contenedorData.innerHTML=`
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Rut</th>
+                        <th scope="col">Nombre Mascota</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                </tbody>
+                </table>
+            `
+
+        // validación nombre mascota
+        while (res.data.length === 0) {
+            alert("Nombre no encontrado. Revise que el nombre exista en la lista de registros e intente nuevamente.")
+            console.log("se interrumpió el programa")
+            contenedorData.setAttribute("class", "col-5 container p-3 m-auto text-center")
+            contenedorData.innerHTML=`
+                <h5 class="text-center">Consulta no realizada. Puede encontrar la lista de mascotas y usuarios en nuestro directorio de registros.</h5>
+            `
+            break
+        }
+    
+        // pintar data en DOM
+        const cuerpoTabla = document.getElementById("cuerpoTabla")
+        res.data.forEach(data => {
+            const fila = document.createElement("tr")
+            fila.innerHTML += `
+                <td>${data.rut}</td>
+                <td>${data.nombre}</td>
+            `
+            cuerpoTabla.appendChild(fila)
+        })  
+    } catch (err) {
+        console.log('Error: ', err)
+    }
 }
 
     // consultar mascotas por rut usuario
 const consultaPorRut = async () => {
-    console.log("retornando todas las mascotas asociadas a rut")
+    try {
+        const consulta = prompt("Ingrese RUN del usuario: ")
+        const res = await axios(`http://localhost:8000/usuarios/${consulta}`)
+           contenedorData.innerHTML=`
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Run</th>
+                        <th scope="col">Nombre Mascota</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                </tbody>
+                </table>
+            `
+
+        // validación nombre mascota
+        while (res.data.length === 0) {
+            alert("RUN incorrecto. Revise que el RUN exista en la lista de registros e intente nuevamente.")
+            contenedorData.setAttribute("class", "col-5 container p-3 m-auto text-center")
+            contenedorData.innerHTML=`
+                <h5 class="text-center">Consulta no realizada. Puede encontrar la lista de usuarios en nuestro directorio de registros.</h5>
+            `
+            break
+        }
+    
+        // pintar data en DOM
+        const cuerpoTabla = document.getElementById("cuerpoTabla")
+        res.data.forEach(data => {
+            const fila = document.createElement("tr")
+            fila.innerHTML += `
+                <td>${data.rut}</td>
+                <td>${data.nombre}</td>
+            `
+            cuerpoTabla.appendChild(fila)
+        })  
+    } catch (err) {
+        console.log('Error: ', err)
+    }
 }
 
     // postear registro

@@ -63,11 +63,53 @@ const listarMascotas = (req, res) => {
   }
 
 const servirDatosMascota = (req, res) => {
-    res.send("consulta una mascota por nombre");
+    // INNER JOIN de archivos json
+    let arrData = []
+    usuariosObjeto.forEach(usuario => {
+        mascotasObjeto.forEach(mascota => {
+            if (usuario.id == mascota.idUsuario) {
+                arrData.push({
+                    rut: usuario.rut,
+                    nombre: mascota.nombre
+                })
+            }
+        })
+    });
+    
+    // consulta get con parámetro
+    let respuesta = []
+    arrData.forEach(registro => {
+        if(registro.nombre == req.params.nombre) {
+            respuesta.push(registro)
+        }
+    })
+
+    // respuesta servidor
+    res.send(respuesta);
   }
 
 const servirMascotasUsuario = (req, res) => {
-    res.send("consulta todas las mascotas del usuario")
+    // INNER JOIN de archivos json
+    let arrData = []
+    usuariosObjeto.forEach(usuario => {
+        mascotasObjeto.forEach(mascota => {
+            if (usuario.id == mascota.idUsuario) {
+                arrData.push({
+                    rut: usuario.rut,
+                    nombre: mascota.nombre
+                })
+            }
+        })
+    });
+
+    // consulta get con parámetro
+    let respuesta = []
+    arrData.forEach(registro => {
+        if(registro.rut == req.params.rut) {
+            respuesta.push(registro)
+        }
+    })
+    res.send(respuesta)
 }  
 
 // funciones para postear data
