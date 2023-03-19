@@ -1,0 +1,42 @@
+[
+    {
+        "idUsuario": 1,    
+        "nombre": "Chokito"
+    },
+    {
+        "idUsuario": 2,    
+        "nombre": "Robin"
+    },
+    {
+        "idUsuario": 3,    
+        "nombre": "Martina"
+    },
+    {
+        "idUsuario": 4,    
+        "nombre": "Pillán"
+    },
+    {
+        "idUsuario": 5,    
+        "nombre": "Lulú"
+    },
+    {
+        "idUsuario": 6,    
+        "nombre": "Balto"
+    },
+    {
+        "idUsuario": 7,    
+        "nombre": "Mía"
+    },
+    {
+        "idUsuario": 8,    
+        "nombre": "Lihuén"
+    },
+    {
+        "idUsuario": 9,    
+        "nombre": "Andy"
+    },
+    {
+        "idUsuario": 9,
+        "nombre": "Tony"
+    }
+]
