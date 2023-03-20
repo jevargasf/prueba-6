@@ -1,3 +1,4 @@
+
 // Inicialización elementos DOM
 const contenedorData = document.getElementById("contenedorData")
 const listarRegistros = document.getElementById("listarRegistros")
@@ -133,51 +134,112 @@ const pintarPost = async () => {
         contenedorData.innerHTML = `
             <form id="formularioPost">
                 <div class="form-group">
-                    <label for="rut">RUN Dueño</label>
-                    <input type="text" class="form-control" id="rut" name="rut" aria-describedby="rut" placeholder="Ingrese RUN del dueño">
+                    <label for="rut">RUN Dueño sin puntos con guión. Ej.: 11222333-4</label>
+                    <input type="text" class="form-control" id="rut" name="rut" aria-describedby="rut" placeholder="Ingrese RUN del dueño" required pattern="^[0-9]+-[0-9kK]{1}$">
                 </div>
                 <div class="form-group">
                     <label for="nombre">Nombre Mascota</label>
-                    <input type="text" class="form-control" id="nombre" aria-describedby="nombre" placeholder="Ingrese nombre mascota">
+                    <input type="text" class="form-control" id="nombre" aria-describedby="nombre" placeholder="Ingrese nombre mascota" required>
                 </div>
                 <button type="submit" class="btn btn-primary" id="botonEnviar">Enviar</button>
             </form>
         `
-       
-
-
-
-
-
-        // si rut existe, agregar mascota 
-
-  
 
 }
 
 const btnPost = async (e) => {
+    try {
+        e.preventDefault()
+        const inputRut = document.getElementById("rut")
+        const inputNombre = document.getElementById("nombre")
+        // validación rut
+        while (inputRut.value.length > 10 && inputRut.value.length < 10) {
+            alert("RUN no válido. Por favor, ingresa nuevamente.")
+            break
+        }
+
+        // envía rut y nombre mascota, backend comprueba si el rut existe o no
+        const res = await axios({
+            method: 'post',
+            url: `http://localhost:8000/mascotas/crear`,
+            data: {
+                rut: inputRut.value,
+                nombre: inputNombre.value
+            }
+        })
+        alert(res.data.mensaje)
+    } catch (err) {
+        console.log('Error:', err)
+    }
+}
+
+    // borrar mascota por nombre
+const pintarBorrarMascota = async () => {
+    // pintar formulario para enviar data
+    contenedorData.innerHTML = `
+    <h5 class="text-center my-3 py-3">Ingrese el nombre de la mascota de que desea borrar y RUN del dueño.</h5>
+    <form id="formularioDelete">
+        <div class="form-group">
+            <label for="rut">RUN Dueño sin puntos con guión. Ej.: 11222333-4</label>
+            <input type="text" class="form-control" id="rut" name="rut" aria-describedby="rut" placeholder="Ingrese RUN del dueño." required pattern="^[0-9]+-[0-9kK]{1}$">
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombre Mascota</label>
+            <input type="text" class="form-control" id="nombre" aria-describedby="nombre" placeholder="Ingrese nombre mascota" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Borrar Registro</button>
+    </form>
+`
+}
+
+const borrarMascota = async (e) => {
+    try {
     e.preventDefault()
     // envía rut y nombre mascota, backend comprueba si el rut existe o no
     const inputRut = document.getElementById("rut")
     const inputNombre = document.getElementById("nombre")
     const res = await axios({
-        method: 'post',
-        url: `http://localhost:8000/mascotas/crear`,
+        method: 'delete',
+        url: `http://localhost:8000/mascotas/${inputNombre.value}`,
         data: {
             rut: inputRut.value,
             nombre: inputNombre.value
         }
     })
-    .then((res) => alert(res.data.mensaje))
+    alert(res.data.mensaje)
+    } catch (err) {
+        console.log('Error:', err)
+    }
 }
 
-    // borrar mascota por nombre
-const borrarMascota = async () => {
-    
-}
     // borrar todas las mascotas por rut usuario
-const borrarPorRut = async () => {
-    console.log("borrando todas las mascotas asociadas al rut")
+const pintarBorrarPorRut = async () => {
+    // pintar formulario para enviar data
+    contenedorData.innerHTML = `
+    <h5 class="text-center my-3 py-3">Ingrese el RUN del dueño para borrar todas sus mascotas registradas.</h5>
+    <form id="formularioDelete">
+        <div class="form-group">
+            <label for="rut">RUN Dueño sin puntos con guión. Ej.: 11222333-4</label>
+            <input type="text" class="form-control" id="rut" name="rut" aria-describedby="rut" placeholder="Ingrese RUN del dueño" required pattern="^[0-9]+-[0-9kK]{1}$">
+        </div>
+        <button type="submit" class="btn btn-primary">Borrar Todos los Registros</button>
+    </form>
+    `
+}
+
+const borrarPorRut = async (e) => {
+    try {
+        e.preventDefault()
+        // envía rut y nombre mascota, backend comprueba si el rut existe o no
+        const inputRut = document.getElementById("rut")
+        const res = await axios({
+            method: 'delete',
+            url: `http://localhost:8000/usuarios/${inputRut.value}`
+        })
+        alert(res.data.mensaje)
+        } catch (err) {
+            console.log('Error:', err)
+        }
 }
 
 
@@ -189,6 +251,12 @@ agregarMascota.addEventListener('click', (e) => {
     pintarPost();
     document.getElementById("formularioPost").addEventListener('submit', e => btnPost(e))
 })
-eliminaMascota.addEventListener('click', borrarMascota)
-eliminaPorRut.addEventListener('click', borrarPorRut)
+eliminaMascota.addEventListener('click', (e) => {
+    pintarBorrarMascota();
+    document.getElementById("formularioDelete").addEventListener('submit', e => borrarMascota(e))
+})
+eliminaPorRut.addEventListener('click', (e) => {
+    pintarBorrarPorRut();
+    document.getElementById("formularioDelete").addEventListener('submit', e => borrarPorRut(e))
+})
 

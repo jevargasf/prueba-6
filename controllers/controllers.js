@@ -159,7 +159,7 @@ const postMascota = (req, res) => {
                 console.log(readFileSync(fileMascotas, "utf8"));
                 }
             });
-            res.send("se agregó correctamente")
+            res.json({ mensaje: "El registro se agregó correctamente."})
 
         // registro de nuevo usuario y nueva mascota
         } else {        
@@ -202,7 +202,7 @@ const postMascota = (req, res) => {
                 console.log(readFileSync(fileMascotas, "utf8"));
                 }
             });
-            res.send("se agregó correctamente")
+            res.json({ mensaje: "El registro se agregó correctamente."})
         }
     } catch (err) {
         console.log('Error: ', err)
@@ -213,6 +213,23 @@ const postMascota = (req, res) => {
 // funciones para borrar data
 const borrarMascota = (req, res) => {
     try {
+        // validar que el nombre de la mascota pertenece al usuario correcto
+            // recibir datos del body
+        const data = req.body    
+            // INNER JOIN de archivos json
+        let arrData = []
+        usuariosObjeto.forEach(usuario => {
+            mascotasObjeto.forEach(mascota => {
+                if (usuario.id == mascota.idUsuario) {
+                    arrData.push({ rut: usuario.rut, nombre: mascota.nombre })
+                }
+            })
+        });
+        while (arrData.filter(registro => registro.rut === data.rut && registro.nombre === data.nombre).length <= 0) {
+            res.json({ mensaje: "El registro no existe en la base de datos. Por favor, intente nuevamente." })
+            break
+        }
+
         // encontrar id a borrar en json data mascotas y data usuario
         let mascotaBorrar = null
         mascotasObjeto.forEach(mascota => {
@@ -237,7 +254,7 @@ const borrarMascota = (req, res) => {
             }
         });
 
-        res.send("se borró correctamente")
+        res.json({ mensaje: "El registro se borró correctamente."})
     } catch (err) {
         console.log('Error: ', err)
     }
@@ -245,32 +262,44 @@ const borrarMascota = (req, res) => {
 
 const borrarMascotasRut = (req, res) => {
     try {
-    // encontrar id asociado al rut
-    let idBorrar = null
-    usuariosObjeto.forEach(usuario => {
-        if (usuario.rut == req.params.rut) {
-            idBorrar = usuario.id
+        // validar que el rut del usuario existe en la base 
+            // INNER JOIN de archivos json
+        let arrRutUsuarios = []
+        usuariosObjeto.forEach(usuario => {
+            arrRutUsuarios.push({ rut: usuario.rut })
+        });
+        while (!arrRutUsuarios.filter(registro => registro.rut === req.params.rut).length > 0) {
+            res.json({ mensaje: "El usuario no existe en la base de datos. Por favor, intente nuevamente." })
+            break
         }
-    })
-    // borrar registros asociados a idUsuario
-    let arrNuevo = []
-    mascotasObjeto.forEach(mascota => {
-        if (mascota.idUsuario != idBorrar) {
-            arrNuevo.push(mascota)
-        }
-    })
 
-    // reescribir archivo json mascotas
-    writeFile(fileMascotas, JSON.stringify(arrNuevo, 0, 4), (err) => {
-        if (err)
-        console.log(err);
-        else {
-        console.log("File written successfully\n");
-        console.log("The written has the following contents:");
-        console.log(readFileSync(fileMascotas, "utf8"));
-        }
-    });
-    res.send("se borraron todos los registros")
+            // encontrar id asociado al rut
+            let idBorrar = null
+            usuariosObjeto.forEach(usuario => {
+                if (usuario.rut == req.params.rut) {
+                    idBorrar = usuario.id
+                }
+            })
+            // borrar registros asociados a idUsuario
+            let arrNuevo = []
+            mascotasObjeto.forEach(mascota => {
+                if (mascota.idUsuario != idBorrar) {
+                    arrNuevo.push(mascota)
+                }
+            })
+
+            // reescribir archivo json mascotas
+            writeFile(fileMascotas, JSON.stringify(arrNuevo, 0, 4), (err) => {
+                if (err)
+                console.log(err);
+                else {
+                console.log("File written successfully\n");
+                console.log("The written has the following contents:");
+                console.log(readFileSync(fileMascotas, "utf8"));
+                }
+            });
+            res.json({ mensaje : "Se borraron todos los registros."})
+        
     } catch (err) {
         console.log('Error: ', err)
     }
