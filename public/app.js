@@ -127,13 +127,53 @@ const consultaPorRut = async () => {
 }
 
     // postear registro
-const postRegistro = async () => {
-    console.log("posteando nuevo registro")
+const pintarPost = async () => {
+    
+        // pintar formulario para enviar data
+        contenedorData.innerHTML = `
+            <form id="formularioPost">
+                <div class="form-group">
+                    <label for="rut">RUN Dueño</label>
+                    <input type="text" class="form-control" id="rut" name="rut" aria-describedby="rut" placeholder="Ingrese RUN del dueño">
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre Mascota</label>
+                    <input type="text" class="form-control" id="nombre" aria-describedby="nombre" placeholder="Ingrese nombre mascota">
+                </div>
+                <button type="submit" class="btn btn-primary" id="botonEnviar">Enviar</button>
+            </form>
+        `
+       
+
+
+
+
+
+        // si rut existe, agregar mascota 
+
+  
+
+}
+
+const btnPost = async (e) => {
+    e.preventDefault()
+    // envía rut y nombre mascota, backend comprueba si el rut existe o no
+    const inputRut = document.getElementById("rut")
+    const inputNombre = document.getElementById("nombre")
+    const res = await axios({
+        method: 'post',
+        url: `http://localhost:8000/mascotas/crear`,
+        data: {
+            rut: inputRut.value,
+            nombre: inputNombre.value
+        }
+    })
+    .then((res) => alert(res.data.mensaje))
 }
 
     // borrar mascota por nombre
 const borrarMascota = async () => {
-    console.log("borrando mascota por nombre")
+    
 }
     // borrar todas las mascotas por rut usuario
 const borrarPorRut = async () => {
@@ -145,6 +185,10 @@ const borrarPorRut = async () => {
 listarRegistros.addEventListener('click', pintarRegistros)
 consultaPorNombre.addEventListener('click', consultaMascota)
 consultaRut.addEventListener('click', consultaPorRut)
-agregarMascota.addEventListener('click', postRegistro)
+agregarMascota.addEventListener('click', (e) => {
+    pintarPost();
+    document.getElementById("formularioPost").addEventListener('submit', e => btnPost(e))
+})
 eliminaMascota.addEventListener('click', borrarMascota)
 eliminaPorRut.addEventListener('click', borrarPorRut)
+

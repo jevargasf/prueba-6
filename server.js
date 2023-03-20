@@ -1,13 +1,15 @@
 const express = require('express');
 const port = 8000
 const router = require('./routes/routes.js')
+const bodyParser = require('body-parser')
 const cors = require('cors')
+
 
 const app = express();
 
 // middlewares
-app.use(express.json());
 app.use(cors())
+app.use(bodyParser.json())
 
 // Definir rutas de las páginas de la aplicación
 app.use('/', router)
